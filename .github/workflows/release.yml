@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+
+      # - name: Cache cargo
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: |
+      #       ~/.cargo/bin/
+      #       ~/.cargo/registry/index/
+      #       ~/.cargo/registry/cache/
+      #       ~/.cargo/git/db/
+      #       target/
+      #     key: cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build
+        run: cargo build -r
+
+      # - name: Test
+      #   run: cargo test -r
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: target/release/*.exe
